@@ -1,0 +1,225 @@
+//Jairus and Teresa
+//2 player Tic Tac Toe game Application
+//each player takes turn to get a row of 3 to win
+//jan 16, 2019
+//Mr.Carroll
+
+import java.lang.String;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class TicTacToe extends JFrame {
+  private JFrame frame;
+  private JPanel contentPane;
+  
+  static JButton [] button = new JButton[9];
+  static JButton playAgain;
+  static JButton reset;
+  
+  private JLabel playerLabel;
+  
+  private JLabel p1WinCountLabel;
+  static int p1WinCount = 0;
+  private JLabel p2WinCountLabel;
+  static int p2WinCount = 0;
+  
+  static int player = 1;
+  static int turns = 1;
+  static boolean win = false;
+  
+  private Color p1TextColour = new Color(161, 214, 226);
+  private Color p2TextColour = new Color(188, 186, 190);
+  private Color background = new Color(25, 150, 173);
+  private Color white = new Color(241, 241, 242);
+  
+  public TicTacToe(){
+    frame = new JFrame ("Tic Tac Toe");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    
+    contentPane = new JPanel();
+    contentPane.setBackground(background);
+    contentPane.setLayout(new GridLayout(0, 3, 10, 10));
+    contentPane.setBorder(BorderFactory.createEmptyBorder (10, 10, 10, 10));
+    
+    thehandler handler = new thehandler ();
+    
+    //shows whose turn
+    playerLabel = new JLabel("Player 1's turn");
+    playerLabel.setPreferredSize(new Dimension(200, 100));
+    contentPane.add(playerLabel);
+    
+    //Label for how many times player1 has won
+    p1WinCountLabel = new JLabel(" ");
+    p1WinCountLabel.setPreferredSize(new Dimension(200, 100));
+    contentPane.add(p1WinCountLabel);
+    
+    //Label for how many times player1 has won
+    p2WinCountLabel = new JLabel(" ");
+    p2WinCountLabel.setPreferredSize(new Dimension(200, 100));
+    contentPane.add(p2WinCountLabel);
+    
+    //buttons
+    for (int i = 0; i < button.length; i++) {
+      button[i] = new JButton (" ");
+      button[i].setBackground(Color.darkGray);
+      button[i].setPreferredSize(new Dimension(200, 100));
+      contentPane.add(button[i]);
+      button[i].addActionListener(handler);
+    }
+    
+    //play again button
+    playAgain = new JButton ("Play Again");
+    playAgain.setPreferredSize(new Dimension(200, 100));
+    playAgain.setBackground(white);
+    contentPane.add(playAgain);
+    playAgain.addActionListener(handler);
+    
+    //reset the scores
+    reset = new JButton ("Reset");
+    reset.setPreferredSize(new Dimension(200, 100));
+    reset.setBackground(white);
+    contentPane.add(reset);
+    reset.addActionListener(handler);
+      
+    frame.setContentPane(contentPane);
+    frame.pack();
+    frame.setVisible(true);
+  }
+  
+  //ActionListener
+  private class thehandler implements ActionListener {
+    public void actionPerformed(ActionEvent event) {
+    
+      JButton buttonClicked = (JButton)event.getSource();
+      
+      //when the button is clicked, it will change the text to either X or O
+      if (player == 1 && !buttonClicked.getText().equals("Play Again") && !buttonClicked.getText().equals("Reset") && win == false){
+        buttonClicked.setText("X");
+        buttonClicked.setBackground(p1TextColour);
+        player = 2;
+      }else if (player == 2 && !buttonClicked.getText().equals("Play Again") && !buttonClicked.getText().equals("Reset") && win == false){
+        buttonClicked.setText("O");
+        buttonClicked.setBackground(p2TextColour);
+        player = 1;
+      }
+        
+      
+      //checks for win horizontal
+      for (int r = 0; r < 7;){
+        for (int b = r; b == r;){
+          if (button[b].getText().equals(button[b+1].getText()) && button[b].getText().equals(button[b+2].getText()) && !button[b].getText().equals(" ")){
+            win = true;
+          }
+          r += 3;
+        }
+      }
+      //checks for win vertical
+      for (int c = 0; c < 3;){
+        for (int b = c; b == c;){
+          if (button[b].getText().equals(button[b+3].getText()) && button[b].getText().equals(button[b+6].getText()) && !button[b].getText().equals(" ")){
+            win = true;
+          }
+          c += 1;
+        }
+      }
+      //checks for win diagonal(left to right)
+      if (button[0].getText().equals(button[4].getText()) && button[0].getText().equals(button[8].getText()) && !button[0].getText().equals(" ")){
+        win = true;
+      }
+      //checks for win diagonal(right to left)
+      if (button[2].getText().equals(button[4].getText()) && button[2].getText().equals(button[6].getText()) && !button[2].getText().equals(" ")){
+        win = true;
+      }
+      //checks for a tie
+      if (turns == 9 && win == false){
+        JOptionPane.showMessageDialog(frame,"It's a tie");
+      }
+      
+      //change which player plays next
+      if (win == false){
+        if(player == 1){
+          playerLabel.setText("Player 1's turn");
+          turns += 1;
+        }else if(player == 2){
+          playerLabel.setText("Player 2's turn");
+          turns += 1;
+        }
+      }
+      
+      //if there is a win, following code is executed 
+      if (win == true){
+        if (buttonClicked.getText().equals("X")){
+          p1WinCount += 1;
+          JOptionPane.showMessageDialog(frame,"Player 1 wins!");
+          p1WinCountLabel.setText("Player 1 won "+ p1WinCount +" time(s)");
+          p1WinCountLabel.setForeground(p1TextColour);
+          for (int b = 0; b < 9; b++){
+            button[b].setEnabled(false);
+          }
+        }else if(buttonClicked.getText().equals("O")){
+          p2WinCount += 1;
+          JOptionPane.showMessageDialog(frame,"Player 2 wins!");
+          p2WinCountLabel.setText("Player 2 won "+ p2WinCount +" time(s)");
+          p2WinCountLabel.setForeground(p2TextColour);
+          for (int b = 0; b < 9; b++){
+            button[b].setEnabled(false);
+          }
+        }
+      }
+      
+      
+      //reset to play another round
+      if (buttonClicked.getText().equals("Play Again")){
+        for (int i = 0; i < 9; i++) {
+          button[i].setText(" ");
+          button[i].setBackground(Color.darkGray);
+          button[i].setEnabled(true);
+        }
+        win = false;
+        player = 1;
+        turns = 1;
+        playerLabel.setText("Player 1's turn");
+        playAgain.setText("Play Again");
+      }
+      
+      //resets scores
+      if (buttonClicked.getText().equals("Reset")){
+        for (int i = 0; i < 9; i++) {
+          button[i].setText(" ");
+          button[i].setBackground(Color.darkGray);
+          button[i].setEnabled(true);
+        }
+        win = false;
+        player = 1;
+        playerLabel.setText("Player 1's turn");
+        turns = 1;
+        p1WinCount = 0;
+        p2WinCount = 0;
+        p1WinCountLabel.setText(" ");
+        p2WinCountLabel.setText(" ");
+      }
+    }
+  }
+  
+   
+  
+  
+   private static void runGUI() {
+    JFrame.setDefaultLookAndFeelDecorated(true);
+    TicTacToe gameWindow = new TicTacToe();
+    gameWindow.setSize(1000, 1000);
+  }
+   
+  public static void main(String[] args) {
+    javax.swing.SwingUtilities.invokeLater(new Runnable() {
+      public void run () { 
+        runGUI();
+      }
+    });
+  }
+}
+  
+    
+    
+    
